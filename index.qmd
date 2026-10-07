@@ -11,9 +11,9 @@ execute:
 
 ## Data
 
-I am interested in the pattern of labor force participation (LPR) in mainland China, so I found this data set from the International Labour Organization: <https://rplumber.ilo.org/data/indicator/?id=EAP_DWAP_SEX_AGE_RT_A&lang=en&type=label&format=.xlsx>
+I am interested in the pattern of labor force participation in mainland China, so I found this data set from the International Labour Organization: <https://rplumber.ilo.org/data/indicator/?id=EAP_DWAP_SEX_AGE_RT_A&lang=en&type=label&format=.xlsx>
 
-According to ILO's definition, the LPR is the share of persons who are in the labour force as a percent of the working-age population. The labour force is the sum of all persons of working age who are employed and those who are unemployed.
+According to ILO's definition, the labor force participation rate is the share of persons who are in the labour force as a percent of the working-age population. The labour force is the sum of all persons of working age who are employed and those who are unemployed.
 
 ## Initial Steps
 
@@ -53,7 +53,7 @@ ggplot(chnttl,
        subtitle = "Total labor force participation among the population aged 15+",
        x = "Year",
        y = "Total Labor Participation Rate (%)",
-       caption = "Source: ILOSTAT, Official Estimates")
+       caption = "Source: ILOSTAT, Labour Force Participation Rate, China (Mainland), Official Estimates")
   
 ```
 
@@ -66,13 +66,13 @@ These trends suggest that policies aimed at extending working lives, increasing 
 To better understand gender differences in labor market, the following visualization compares labor force participation rates for males and females. Data from "Population Census" contain decade-level data since 1982.
 
 ```{r}
-oe_sex <- chn |>
+pc_sex <- chn |>
   filter(source.label == "PC - Population Census",
          sex %in% c("Male", "Female"),
          age_band == "Age (Aggregate bands): 15+"
   )
 
-ggplot(oe_sex,
+ggplot(pc_sex,
        aes(x = year, y = obs_value, color = sex, lineype = sex)) +
   geom_line(linewidth = 1.1) +
   geom_point(size = 2) +
@@ -82,7 +82,7 @@ ggplot(oe_sex,
        y = "Labor Participation Rate (%)",
        color = "Sex",
        linetype = "Sex",
-       caption = "Source: ILOSTAT, Population Census") +
+       caption = "Source: ILOSTAT, Labour Force Participation Rate, China (Mainland), Population Census") +
   scale_color_manual(values = c(
     "Male" = "blue",
     "Female" = "red"
@@ -91,17 +91,44 @@ ggplot(oe_sex,
 
 ```
 Observation:
-This figure shows that labor force participation rates decreased for both sexes between the 1980s and 2010s, with men consistently participating at higher rates than women. Together with Graph 1,these results break down the overall decline in labor force participation shown in Graph 1 by examining trends for men and women separately. They indicate that the decline in China's overall labor force participation reflects changes affecting both men and women.
+This figure shows that labor force participation rates decreased for both sexes between the 1980s and 2010s, with men consistently participating at higher rates than women. This also helps breaking down the overall decline since 2001 in labor force participation shown in Graph 1, by examining trends for men and women separately. They indicate that the decline in China's overall labor force participation reflects changes affecting both men and women.
 Policies that encourage female labor force participation could help offset workforce shortages associated with population aging and support long-term economic growth.
 
 ## Graph 3
 
-You can add options to executable code like this
+After examining overall and gender-specific trends, now I want to explore how labor force participation patterns differ across age groups in China for 2000s-2010s.
 
 ```{r}
-#| echo: false
-2 * 2
+pc_byage <- chn |>
+  filter(source.label == "PC - Population Census",
+         sex == "Total",
+         year >= 2000,
+         str_detect(age_band, "10-year bands")
+         ) |>
+    mutate(age_group = case_when(
+          age_band == "Age (10-year bands): 15+" ~ "15+",
+          age_band == "Age (10-year bands): 15-24" ~ "15-24",
+          age_band == "Age (10-year bands): 25-34" ~ "25-34",
+          age_band == "Age (10-year bands): 35-44" ~ "35-44",
+          age_band == "Age (10-year bands): 45-54" ~ "45-54",
+          age_band == "Age (10-year bands): 55-64" ~ "55-64",
+          age_band == "Age (10-year bands): 65+" ~ "65+"
+          )
+        ) |>
+      filter(age_group != "15+")
+
+ggplot(pc_byage, aes(x = age_group, y = obs_value, fill = age_group)) +
+      geom_col()+
+      labs(title = "Labor Force Participation Rates by Age Group in China, Mainland (2000s-2010s)",
+           subtitle = "Age groups are separated by 10-year age band",
+           x = "Age Group",
+           y = "Labor Participation Rate (%)",
+           fill = "Age Group",
+           caption = "Source: ILOSTAT, Labour Force Participation Rate, China (Mainland), Population Census")
 ```
+Observation:
+This figure shows differences in labor force participation across age groups since 2000s. Participation rates are highest among individuals aged 25–44, indicating that prime working-age adults are the most active participants in the labor market. In contrast, participation is much lower among young adults aged 15–24 and declines sharply after age 55, with the 65+ group showing the lowest participation rate. This suggests that the overall labor force participation rate is shaped by the varying levels of labor market engagement across different age groups.
+Understanding these differences is important because policies focusing on different age groups will have different level of impact on the overall labor force participation rate.
 
 ## Graph 4
 
