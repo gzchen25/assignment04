@@ -49,7 +49,7 @@ ggplot(chnttl,
        aes(x=year, y= obs_value)) +
   geom_line(color = "red", linewidth = 1.1) +
   geom_point(color = "red", size = 2) +
-  labs(title = "Labor Force Participation Rate in China (2001–2018)",
+  labs(title = "Labor Force Participation Rate in China, Mainland (2001–2018)",
        subtitle = "Total labor force participation among the population aged 15+",
        x = "Year",
        y = "Total Labor Participation Rate (%)",
@@ -57,16 +57,42 @@ ggplot(chnttl,
   
 ```
 
-#Observation This figure shows the trend in China's total labor force participation rate between 2001 and 2018. The participation rate declined steadily from more than 76 percent in the early 2000s to approximately 70 percent by 2018, indicating that a smaller share of the population aged 15 and above was participating in the labor market over time.
+Observation:
+This figure shows the trend in total labor force participation rate between 2001 and 2018. The participation rate declined steadily from more than 76 percent in the early 2000s to approximately 70 percent by 2018, indicating that a smaller share of the population aged 15 and above was participating in the labor market over time.
+These trends suggest that policies aimed at extending working lives, increasing labor-force participation among underrepresented groups, and improving labor productivity may become increasingly important for sustaining long-term economic growth.
 
 ## Graph 2
 
-You can add options to executable code like this
+To better understand gender differences in labor market, the following visualization compares labor force participation rates for males and females. Data from "Population Census" contain decade-level data since 1982.
 
 ```{r}
-#| echo: false
-2 * 2
+oe_sex <- chn |>
+  filter(source.label == "PC - Population Census",
+         sex %in% c("Male", "Female"),
+         age_band == "Age (Aggregate bands): 15+"
+  )
+
+ggplot(oe_sex,
+       aes(x = year, y = obs_value, color = sex, lineype = sex)) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2) +
+  labs(title = "Labor Force Participation Rates by Sex in China, Mainland (1980s–2010s)",
+       subtitle = "Comparison of labor force participation rates among men and women aged 15+",
+       x = "Year",
+       y = "Labor Participation Rate (%)",
+       color = "Sex",
+       linetype = "Sex",
+       caption = "Source: ILOSTAT, Population Census") +
+  scale_color_manual(values = c(
+    "Male" = "blue",
+    "Female" = "red"
+    )
+  )
+
 ```
+Observation:
+This figure shows that labor force participation rates decreased for both sexes between the 1980s and 2010s, with men consistently participating at higher rates than women. Together with Graph 1,these results break down the overall decline in labor force participation shown in Graph 1 by examining trends for men and women separately. They indicate that the decline in China's overall labor force participation reflects changes affecting both men and women.
+Policies that encourage female labor force participation could help offset workforce shortages associated with population aging and support long-term economic growth.
 
 ## Graph 3
 
