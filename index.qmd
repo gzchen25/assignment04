@@ -130,6 +130,7 @@ pc_byage <- chn |>
 
 ggplot(pc_byage, aes(x = age_group, y = obs_value, fill = age_group)) +
       geom_col()+
+      scale_fill_manual(values = c("15-24" = "pink","25-34" = "lightblue","35-44" = "blue","45-54" = "navy","55-64" = "yellow","65+" = "purple"))+
       geom_text(
         aes(label = round(obs_value, 1)),
         position = position_dodge(width = 0.9),
